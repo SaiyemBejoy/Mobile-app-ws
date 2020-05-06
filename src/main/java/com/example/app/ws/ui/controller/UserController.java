@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.app.ws.exceptions.UserServiceException;
 import com.example.app.ws.service.UserService;
 import com.example.app.ws.shared.dto.UserDto;
 import com.example.app.ws.ui.model.request.UserDetailsRequestModel;
+import com.example.app.ws.ui.model.response.ErrorMessages;
 import com.example.app.ws.ui.model.response.UserRest;
 
 @RestController
@@ -39,8 +41,11 @@ public class UserController {
 			consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
 			produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE}
 			)
-	public UserRest createUser(@RequestBody UserDetailsRequestModel userDetails) {
+	public UserRest createUser(@RequestBody UserDetailsRequestModel userDetails) throws Exception {
 		UserRest returnValue = new UserRest();
+		
+		if(userDetails.getFirstName().isEmpty()) throw new 
+			UserServiceException(ErrorMessages.MISSING_REQUIRED_FIELD.getErrorMessage());
 		
 		UserDto userDto = new UserDto();
 		BeanUtils.copyProperties(userDetails, userDto);
